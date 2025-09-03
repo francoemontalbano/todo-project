@@ -1,0 +1,43 @@
+<div class="task-form-container">
+  <h3>Crear Nueva Tarea</h3>
+  
+  <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="task-form">
+    <!-- Campo título -->
+    <div class="form-group">
+      <label for="title">Título *</label>
+      <input 
+        type="text" 
+        id="title" 
+        formControlName="title"
+        placeholder="Ingresa el título de la tarea"
+        [class.error]="title?.invalid && title?.touched">
+      
+      <div *ngIf="title?.invalid && title?.touched" class="error-text">
+        <span *ngIf="title?.errors?.['required']">El título es requerido</span>
+        <span *ngIf="title?.errors?.['maxlength']">Máximo 120 caracteres</span>
+      </div>
+    </div>
+
+    <!-- Campo fecha límite -->
+    <div class="form-group">
+      <label for="dueDate">Fecha límite (opcional)</label>
+      <input 
+        type="datetime-local" 
+        id="dueDate" 
+        formControlName="dueDate">
+    </div>
+
+    <!-- Mensaje de error general -->
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
+
+    <!-- Botón enviar -->
+    <button 
+      type="submit" 
+      [disabled]="taskForm.invalid || loading"
+      class="submit-btn">
+      {{ loading ? 'Creando...' : 'Crear Tarea' }}
+    </button>
+  </form>
+</div>

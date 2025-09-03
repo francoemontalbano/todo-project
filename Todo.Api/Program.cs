@@ -4,6 +4,17 @@ using Todo.Api.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// CORS para Angular
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200") // Puerto por defecto de Angular
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 // Swagger / OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -20,6 +31,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Habilitar CORS
+app.UseCors("AllowAngular");
 
 app.MapTasks(); //Endpoints
 

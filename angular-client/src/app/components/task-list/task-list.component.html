@@ -1,0 +1,102 @@
+<div class="task-list-container">
+  <h2>Lista de Tareas</h2>
+  
+  <!-- Filtros y controles -->
+  <div class="controls">
+    <div class="filters">
+      <label>
+        Filtrar por estado:
+        <select (change)="onStatusFilterChange($event.target.value)" [value]="statusFilter">
+          <option value="all">Todas</option>
+          <option value="pending">Pendientes</option>
+          <option value="done">Completadas</option>
+        </select>
+      </label>
+      
+      <label>
+        Ordenar por:
+        <select (change)="onSortChange($event.target.value, sortOrder)" [value]="sortBy">
+          <option value="createdAt">Fecha de creación</option>
+          <option value="dueDate">Fecha límite</option>
+        </select>
+      </label>
+      
+      <label>
+        Orden:
+        <select (change)="onSortChange(sortBy, $event.target.value)" [value]="sortOrder">
+          <option value="desc">Descendente</option>
+          <option value="asc">Ascendente</option>
+        </select>
+      </label>
+    </div>
+    
+    <button (click)="loadTasks()" class="refresh-btn">Actualizar</button>
+  </div>
+
+  <!-- Mensaje de error -->
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <!-- Indicador de carga -->
+  <div *ngIf="loading" class="loading">
+    Cargando tareas...
+  </div>
+
+  <!-- Lista de tareas -->
+  <div *ngIf="!loading" class="tasks-grid">
+    <div *ngFor="let task of tasks" class="task-card" [class.completed]="task.isDone">
+      <div class="task-header">
+        <h3>{{ task.title }}</h3>
+        <span class="task-status" [class.done]="task.isDone">
+          {{ task.isDone ? 'Completada' : 'Pendiente' }}
+        </span>
+      </div>
+      
+      <div class="task-details">
+        <p><strong>Creada:</strong> {{ task.createdAt | date:'short' }}</p>
+        <p *ngIf="task.dueDate"><strong>Vence:</strong> {{ task.dueDate | date:'short' }}</p>
+      </div>
+      
+      <div class="task-actions">
+        <button 
+          *ngIf="!task.isDone" 
+          (click)="completeTask(task.id)"
+          class="complete-btn">
+          Completar
+        </button>
+        <button 
+          (click)="deleteTask(task.id)"
+          class="delete-btn">
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensaje cuando no hay tareas -->
+  <div *ngIf="!loading && tasks.length === 0" class="no-tasks">
+    No hay tareas disponibles.
+  </div>
+
+  <!-- Paginación -->
+  <div *ngIf="totalPages > 1" class="pagination">
+    <button 
+      (click)="onPageChange(currentPage - 1)" 
+      [disabled]="currentPage === 1"
+      class="page-btn">
+      Anterior
+    </button>
+    
+    <span class="page-info">
+      Página {{ currentPage }} de {{ totalPages }} ({{ totalTasks }} tareas total)
+    </span>
+    
+    <button 
+      (click)="onPageChange(currentPage + 1)" 
+      [disabled]="currentPage === totalPages"
+      class="page-btn">
+      Siguiente
+    </button>
+  </div>
+</div>
